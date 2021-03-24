@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mine Sweeper</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+
+  <body onload="init()">
+    <div class="app-header-container">
+      <div class="logo-container">
+        <img src="./img/minesweeper-logo.png" />
+      </div>
+
+      <span>Mine Sweeper</span>
+    </div>
+
+    <div class="modal"></div>
+
+    <div class="game-container">
+      <div id="menu-level-1" class="menu-container">
+        <div class="small-container mines-container">
+          💣 <span id="mines-left">0</span>
+        </div>
+
+        <div class="small-container difficulty-container">
+          <input type="radio" id="small" name="difficulties" value="small" onclick="changeDifficulty(this)" checked>
+          <label for="small">Small (4 x 4)</label>
+
+          <input type="radio" id="medium" name="difficulties" value="medium" onclick="changeDifficulty(this)">
+          <label for="medium">Medium (8 x 8)</label>
+
+          <input type="radio" id="large" name="difficulties" value="large" onclick="changeDifficulty(this)">
+          <label for="large">Large (12 x 12)</label>
+        </div>
+
+        <div class="small-container timer-container">00:00</div>
+      </div>
+
+      <div id="menu-level-2" class="menu-container">
+        <div class="small-container lives-container"></div>
+
+        <div class="small-container mode-container">
+          <button id="mode-button" onclick="reset()">😐</button>
+        </div>
+
+        <div class="small-container hints-container">
+          <button id="hint-button" onclick="useHint()" disabled>💡</button>
+          <span id="hints-left"></span>
+        </div>
+      </div>
+
+      <div class="board-container">
+        <table border="1" cellpadding="0">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/board.js"></script>
+    <script src="js/modal.js"></script>
+  </body>
+
+</html>

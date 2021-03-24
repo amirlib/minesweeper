@@ -1,0 +1,142 @@
+body {
+  font-family: Montserrat;
+}
+
+input {
+  margin: 0 5px;
+}
+
+.app-header-container {
+  align-items: center;
+  background-color: rgb(252, 187, 185);
+  border-bottom: 1px solid black;
+  box-sizing: border-box;
+  display: flex;
+  height: 50px;
+  left: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.app-header-container span {
+  color: #fff;
+  font-size: x-large;
+  font-weight: 500;
+}
+
+.logo-container {
+  margin: 0 5%;
+  height: 80%;
+  width: 40px;
+}
+
+.logo-container img {
+  height: 100%;
+  width: 100%;
+}
+
+.modal {
+  background-color: rgb(252, 187, 185);
+  border: 1px rgb(138, 138, 138) solid;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: white;
+  height: 40px;
+  line-height: 40px;
+  margin: 60px auto 0;
+  width: 350px;
+  text-align: center;
+  visibility: hidden;
+}
+
+.game-container {
+  margin: 10px auto 0;
+  width: 600px;
+}
+
+.menu-container {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  padding: 5px;
+  width: 100%;
+}
+
+.menu-container button {
+  background-color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: larger;
+  margin: 0 2px;
+  outline: none;
+}
+
+.small-container {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  justify-content: space-between;
+  padding: 5px;
+  text-align: center;
+}
+
+.mines-container {
+  width: 60px;
+}
+
+.timer-container {
+  width: 60px;
+}
+
+.lives-container {
+  width: 80px;
+}
+
+.hints-container {
+  align-items: center;
+  display: flex;
+  width: 80px;
+}
+
+.board-container {
+  margin: 10px;
+}
+
+.board-container table {
+  margin: 0 auto;
+}
+
+.board-container td {
+  height: 40px;
+  width: 40px;
+}
+
+.board-container .cell {
+  box-sizing: border-box;
+  height: 100%;
+  line-height: 30px;
+  padding: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+.board-container .closed {
+  background-color: rgb(212, 212, 212);
+}
+
+.board-container .closed:hover {
+  background-color: darkgray;
+}
+
+.board-container .opened {
+  background-color: rgb(255, 254, 181);
+}
+
+.board-container .mine {
+  background-color: rgb(255, 202, 181);
+}
