@@ -10,12 +10,7 @@ const USED_LIVE = '🖤';
 var gBoard;
 var gTimerInterval;
 var gGame = getDefaultGameValues();
-var gLevel = {
-  HINTS: 3,
-  LIVES: 2,
-  MINES: 2,
-  SIZE: 4,
-};
+var gLevel = getDefaultGameLevel();
 
 function init() {
   gBoard = buildBoard(gLevel.SIZE);
@@ -24,6 +19,7 @@ function init() {
   renderMinesLeft();
   renderLives();
   renderHints();
+  renderSafeClicks();
   renderBoard(gBoard);
 }
 
@@ -31,12 +27,23 @@ function getDefaultGameValues() {
   return {
     isOn: false,
     markedCount: 0,
-    mode: 'INITIAL', // INITIAL, PLAYING, GAME_OVER, HINT
+    mode: 'INITIAL', // INITIAL, PLAYING, GAME_OVER, HINT, SAFE_CLICK
     secsPassed: 0,
     shownCount: 0,
     smiley: SMILEY_NORMAL,
     usedHints: 0,
     usedLives: 0,
+    usedSafeClicks: 0,
+  };
+}
+
+function getDefaultGameLevel() {
+  return {
+    HINTS: 3,
+    LIVES: 2,
+    MINES: 2,
+    SAFE_CLICKS: 3,
+    SIZE: 4,
   };
 }
 
@@ -147,14 +154,6 @@ function getMinesLeft() {
   return gLevel.MINES - gGame.markedCount - gGame.usedLives;
 }
 
-function renderMinesLeft() {
-  changeElAttr('#menu-level-1 #mines-left', 'innerText', getMinesLeft());
-}
-
-function renderSmiley() {
-  changeElAttr('#menu-level-2 #smiley-button', 'innerText', gGame.smiley);
-}
-
 function renderLives() {
   var livesLeft = getLivesLeft();
   var lives = '';
@@ -170,22 +169,30 @@ function renderLives() {
   changeElAttr('#menu-level-2 .lives-container', 'innerText', lives);
 }
 
+function renderMinesLeft() {
+  changeElAttr('#menu-level-1 #mines-left', 'innerText', getMinesLeft());
+}
+
+function renderSmiley() {
+  changeElAttr('#menu-level-2 #smiley-button', 'innerText', gGame.smiley);
+}
+
 function changeDifficulty(elRadioBtn) {
   switch (elRadioBtn.value) {
     case 'easy':
-      setLevel(3, 2, 2, 4);
+      setLevel(3, 2, 2, 3, 4);
 
       break;
     case 'medium':
-      setLevel(3, 3, 12, 8);
+      setLevel(3, 3, 12, 3, 8);
 
       break;
     case 'hard':
-      setLevel(3, 3, 30, 12);
+      setLevel(3, 3, 30, 3, 12);
 
       break;
     default:
-      setLevel(3, 2, 2, 4);
+      setLevel(3, 2, 2, 3, 4);
 
       break;
   }
@@ -193,10 +200,11 @@ function changeDifficulty(elRadioBtn) {
   reset();
 }
 
-function setLevel(hints, lives, mines, size) {
+function setLevel(hints, lives, mines, safeClicks, size) {
   gLevel.HINTS = hints;
   gLevel.LIVES = lives;
   gLevel.MINES = mines;
+  gLevel.SAFE_CLICKS = safeClicks;
   gLevel.SIZE = size;
 }
 
@@ -207,5 +215,6 @@ function reset() {
   stopTimerInterval();
   renderSmiley();
   resetHints();
+  resetSafeClicks();
   init();
 }

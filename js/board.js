@@ -80,8 +80,8 @@ function renderBoard(board, isLose = false) {
     for (var j = 0; j < board[i].length; j++) {
       if (isLose && board[i][j].isMine) board[i][j].isShown = true;
 
-      var cellClasses = geStringCellClasses(board[i][j]);
-      var cellContent = getCellContentByCell(board[i][j]);
+      var cellClasses = getCellClassesStr(board[i][j]);
+      var cellContent = getCellContent(board[i][j]);
 
       strHTML += `\t<td><div id="cell-${i}-${j}" class="${cellClasses}" onClick="cellClicked(this, ${i}, ${j})" oncontextmenu="cellMarked(this, ${i}, ${j})">${cellContent}</div></td>\n`;
     }
@@ -93,8 +93,8 @@ function renderBoard(board, isLose = false) {
 }
 
 function renderCell(board, elCell, location) {
-  var classes = getArrCellClasses(board[location.i][location.j]);
-  var content = getCellContentByCell(board[location.i][location.j]);
+  var classes = getCellClassesArr(board[location.i][location.j]);
+  var content = getCellContent(board[location.i][location.j]);
 
   elCell.innerText = content;
   elCell.classList.remove('closed', 'mine', 'opened');
@@ -102,7 +102,7 @@ function renderCell(board, elCell, location) {
 }
 
 function expandShown(game, board, elCell, location) {
-  var content = getCellContentByCell(board[location.i][location.j]);
+  var content = getCellContent(board[location.i][location.j]);
 
   renderCell(board, elCell, location);
 
@@ -115,7 +115,7 @@ function expandShown(game, board, elCell, location) {
       if (j < 0 || j >= board[0].length) continue;
       if (i === location.i && j === location.j) continue;
 
-      var el = document.querySelector(`#cell-${i}-${j}`);
+      var el = document.querySelector(getCellIdSelectorByLocation({ i, j }));
 
       if (el.classList.contains('closed')) {
         board[i][j].isShown = true;
@@ -144,7 +144,31 @@ function renderCellHintMode(board, location) {
   startHintTimer(cloned);
 }
 
-function geStringCellClasses(cell) {
+function renderCellSafeClickMode(board) {
+  var locations = getSafeCellsLocations(board);
+  var idx = getRandomInt(0, locations.length);
+
+  cellEl = document.querySelector(getCellIdSelectorByLocation(locations[idx]));
+
+  cellEl.classList.add('safe-click');
+  startSafeClickTimer(cellEl);
+}
+
+function getSafeCellsLocations(board) {
+  var locations = [];
+
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[i].length; j++) {
+      if (board[i][j].isShown || board[i][j].isMarked || board[i][j].isMine) continue;
+
+      locations.push({ i, j });
+    }
+  }
+
+  return locations;
+}
+
+function getCellClassesStr(cell) {
   var cellClass = 'cell';
 
   if (cell.isMarked) return cellClass += ' closed';
@@ -154,7 +178,7 @@ function geStringCellClasses(cell) {
   return cellClass += ' closed';
 }
 
-function getArrCellClasses(cell) {
+function getCellClassesArr(cell) {
   var classes = [];
 
   if (cell.isMarked) classes.push('closed');
@@ -165,7 +189,7 @@ function getArrCellClasses(cell) {
   return classes;
 }
 
-function getCellContentByCell(cell) {
+function getCellContent(cell) {
   if (cell.isMarked) return FLAG;
   if (cell.isMine && cell.isShown) return MINE;
   if (cell.isShown && cell.minesAroundCount > 0) return cell.minesAroundCount;

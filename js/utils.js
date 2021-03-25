@@ -39,6 +39,10 @@ function cloneCell(cell) {
   };
 }
 
+function getCellIdSelectorByLocation(location) {
+  return `#cell-${location.i}-${location.j}`;
+}
+
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
