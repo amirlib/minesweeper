@@ -38,7 +38,16 @@ function renderScores(key) {
 
   scores = JSON.parse(scores);
 
+  removeNoScoresMessage(key);
   scoresToHTML(key, scores);
+}
+
+function removeNoScoresMessage(key) {
+  var selector = `${getScoresSelectorNameByKey(key)} span`;
+
+  if (document.querySelector(selector).innerText === '') return;
+
+  changeElAttr(selector, 'innerText', '');
 }
 
 function displayNoScoresMessage(key) {
