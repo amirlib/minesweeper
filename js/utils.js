@@ -4,12 +4,6 @@ function changeElAttr(selector, attrName, value) {
   el[attrName] = value;
 }
 
-function appendHTMLToEl(selector, value) {
-  var el = document.querySelector(selector);
-
-  el.innerHTML += value;
-}
-
 function createCellLocationsArr(board) {
   var locations = [];
 

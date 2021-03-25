@@ -42,10 +42,9 @@ function renderScores(key) {
 }
 
 function displayNoScoresMessage(key) {
-  var selector = getScoresSelectorNameByKey(key);
-  var strHTML = '<span>No scores yet</span>';
+  var selector = `${getScoresSelectorNameByKey(key)} span`;
 
-  appendHTMLToEl(selector, strHTML);
+  changeElAttr(selector, 'innerText', 'No scores yet');
 }
 
 function scoresToHTML(key, scores) {
@@ -100,9 +99,9 @@ function addScoreToLocalStorage(key, value) {
   }
 
   scores.push(value);
-  localStorage.setItem(key, JSON.stringify(scores));
-}
+  scores.sort();
 
-function compareNums(num1, num2) {
-  return num2 - num1;
+  if (scores.length > 5) scores.pop();
+
+  localStorage.setItem(key, JSON.stringify(scores));
 }

@@ -159,3 +159,7 @@ body {
   margin-block-end: 0;
   padding-inline-start: 0;
 }
+
+.scores-list li {
+  margin: 5px 0;
+}

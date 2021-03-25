@@ -29,9 +29,9 @@ function init() {
 
 function getDefaultGameValues() {
   return {
-    isHint: false,
     isOn: false,
     markedCount: 0,
+    mode: 'INITIAL', // INITIAL, PLAYING, GAME_OVER, HINT
     secsPassed: 0,
     shownCount: 0,
     smiley: SMILEY_NORMAL,
@@ -41,12 +41,13 @@ function getDefaultGameValues() {
 }
 
 function cellClicked(elCell, i, j) {
-  if (!gGame.isOn && !gGame.isHint) startGame({ i, j }); // first ever click
-  if (!gGame.isOn && gGame.isHint) return; // if board is rendering in HINT mode
+  if (gGame.mode === 'INITIAL') startGame({ i, j }); // first ever click
+  if (gGame.mode === 'GAME_OVER') return; // if the game in game over mode
+  if (!gGame.isOn && gGame.mode === 'HINT') return; // if board is rendering in HINT mode
   if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return; // clicking on marked/opened cell
 
   // if user choose to use hint
-  if (gGame.isHint) {
+  if (gGame.mode === 'HINT') {
     gGame.isOn = false;
 
     renderCellHintMode(gBoard, { i, j });
@@ -58,13 +59,20 @@ function cellClicked(elCell, i, j) {
   gBoard[i][j].isShown = true;
   gGame.shownCount++;
 
-  renderCell(elCell, i, j);
+  expandShown(gGame, gBoard, elCell, { i, j });
 
   // if the desired cell is a mine
   if (gBoard[i][j].isMine) {
     gGame.usedLives++;
 
     renderLives();
+
+    if (getMinesLeft() === -1) {
+      // used all flags but hit a mine
+      gGame.usedLives = gLevel.LIVES;
+    } else {
+      renderMinesLeft();
+    }
   }
 
   checkGameOver();
@@ -75,28 +83,19 @@ function cellMarked(elCell, i, j) {
 
   if (event.which !== 3) return; // if not a right click
   if (!gGame.isOn || gBoard[i][j].isShown) return; // if game is off or the cell is already open
-  if (!gBoard[i][j].isMarked && gGame.markedCount === gLevel.MINES) return; // if there are no flags left
+  if (!gBoard[i][j].isMarked && getMinesLeft() === 0) return; // if there are no flags left
 
   gBoard[i][j].isMarked = !gBoard[i][j].isMarked;
   gGame.markedCount += gBoard[i][j].isMarked ? 1 : -1;
 
   renderMinesLeft();
-  renderCell(elCell, i, j);
+  renderCell(gBoard, elCell, { i, j });
   checkGameOver();
 }
 
 function checkGameOver() {
   if (gGame.usedLives === gLevel.LIVES) loseGame();
   else if (gGame.markedCount + gGame.shownCount === gLevel.SIZE ** 2) winGame();
-}
-
-function useHint() {
-  if (!gGame.isOn || gGame.isHint) return;
-
-  gGame.usedHints++;
-  gGame.isHint = true;
-
-  renderHints();
 }
 
 function loseGame() {
@@ -116,6 +115,7 @@ function winGame() {
 }
 
 function gameOver() {
+  gGame.mode = 'GAME_OVER';
   gGame.isOn = false;
 
   renderSmiley();
@@ -135,20 +135,20 @@ function startGame(startLocation) {
   setMinesAroundCount(gBoard);
   startTimerInterval();
 
+  gGame.mode = 'PLAYING';
   gGame.isOn = true;
 }
 
-function renderHints() {
-  var hintsLeft = gLevel.HINTS - gGame.usedHints;
-  var hints = ` X ${hintsLeft}`;
+function getLivesLeft() {
+  return gLevel.LIVES - gGame.usedLives;
+}
 
-  if (hintsLeft === 0) changeElAttr('#menu-level-2 #hint-button', 'disabled', true);
-
-  changeElAttr('#menu-level-2 #hints-left', 'innerText', hints);
+function getMinesLeft() {
+  return gLevel.MINES - gGame.markedCount - gGame.usedLives;
 }
 
 function renderMinesLeft() {
-  changeElAttr('#menu-level-1 #mines-left', 'innerText', gLevel.MINES - gGame.markedCount);
+  changeElAttr('#menu-level-1 #mines-left', 'innerText', getMinesLeft());
 }
 
 function renderSmiley() {
@@ -156,7 +156,7 @@ function renderSmiley() {
 }
 
 function renderLives() {
-  var livesLeft = gLevel.LIVES - gGame.usedLives;
+  var livesLeft = getLivesLeft();
   var lives = '';
 
   for (var i = 0; i < livesLeft; i++) {
@@ -204,8 +204,8 @@ function reset() {
   gGame = getDefaultGameValues();
 
   closeModal();
-  stopHintTimer();
   stopTimerInterval();
   renderSmiley();
+  resetHints();
   init();
 }

@@ -1,7 +1,3 @@
-const HINT_TIMER_FREQ = 1000;
-
-var gHintTimer;
-
 function buildBoard(size) {
   var board = [];
 
@@ -96,13 +92,39 @@ function renderBoard(board, isLose = false) {
   elBoard.innerHTML = strHTML;
 }
 
-function renderCell(elCell, i, j) {
-  var classes = getArrCellClasses(gBoard[i][j]);
+function renderCell(board, elCell, location) {
+  var classes = getArrCellClasses(board[location.i][location.j]);
+  var content = getCellContentByCell(board[location.i][location.j]);
 
-  elCell.innerText = getCellContentByCell(gBoard[i][j]);
-
+  elCell.innerText = content;
   elCell.classList.remove('closed', 'mine', 'opened');
   elCell.classList.add(...classes);
+}
+
+function expandShown(game, board, elCell, location) {
+  var content = getCellContentByCell(board[location.i][location.j]);
+
+  renderCell(board, elCell, location);
+
+  if (content !== EMPTY) return;
+
+  for (var i = location.i - 1; i <= location.i + 1; i++) {
+    if (i < 0 || i >= board.length) continue;
+
+    for (var j = location.j - 1; j <= location.j + 1; j++) {
+      if (j < 0 || j >= board[0].length) continue;
+      if (i === location.i && j === location.j) continue;
+
+      var el = document.querySelector(`#cell-${i}-${j}`);
+
+      if (el.classList.contains('closed')) {
+        board[i][j].isShown = true;
+        game.shownCount++;
+
+        expandShown(game, board, el, { i, j });
+      }
+    }
+  }
 }
 
 function renderCellHintMode(board, location) {
@@ -149,26 +171,4 @@ function getCellContentByCell(cell) {
   if (cell.isShown && cell.minesAroundCount > 0) return cell.minesAroundCount;
 
   return EMPTY;
-}
-
-function startHintTimer(oldBoard) {
-  if (gHintTimer) stopHintTimer();
-
-  gHintTimer = setTimeout(stopHintRenderMode, HINT_TIMER_FREQ, oldBoard);
-}
-
-function stopHintTimer() {
-  if (!gHintTimer) return;
-
-  clearTimeout(gHintTimer);
-
-  gHintTimer = null;
-}
-
-function stopHintRenderMode(board) {
-  gBoard = board;
-  gGame.isHint = false;
-  gGame.isOn = true;
-
-  renderBoard(gBoard);
 }
