@@ -1,8 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Montserrat;
 }
 
-input {
+.default-input {
   margin: 0 5px;
 }
 
@@ -10,7 +14,6 @@ input {
   align-items: center;
   background-color: rgb(252, 187, 185);
   border-bottom: 1px solid black;
-  box-sizing: border-box;
   display: flex;
   height: 50px;
   left: 0;
@@ -41,7 +44,6 @@ input {
   background-color: rgb(252, 187, 185);
   border: 1px rgb(138, 138, 138) solid;
   border-radius: 10px;
-  box-sizing: border-box;
   color: white;
   height: 40px;
   line-height: 40px;
@@ -51,14 +53,13 @@ input {
   visibility: hidden;
 }
 
-.game-container {
+.root-container {
   margin: 10px auto 0;
   width: 600px;
 }
 
 .menu-container {
   align-items: center;
-  box-sizing: border-box;
   display: flex;
   height: 50px;
   justify-content: space-between;
@@ -77,7 +78,6 @@ input {
 
 .small-container {
   align-items: center;
-  box-sizing: border-box;
   display: flex;
   height: 100%;
   justify-content: space-between;
@@ -117,9 +117,8 @@ input {
 }
 
 .board-container .cell {
-  box-sizing: border-box;
   height: 100%;
-  line-height: 30px;
+  line-height: 28px;
   padding: 5px;
   text-align: center;
   width: 100%;
@@ -139,4 +138,24 @@ input {
 
 .board-container .mine {
   background-color: rgb(255, 202, 181);
+}
+
+.best-scores-container {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.difficulty-scores-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.scores-list {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-inline-start: 0;
 }

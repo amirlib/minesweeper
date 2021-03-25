@@ -1,3 +1,7 @@
+const HINT_TIMER_FREQ = 1000;
+
+var gHintTimer;
+
 function buildBoard(size) {
   var board = [];
 
@@ -70,7 +74,7 @@ function calcMinesAroundCell(board, location) {
   return count;
 }
 
-function renderBoard(board) {
+function renderBoard(board, isLose = false) {
   var strHTML = '';
   var elBoard = document.querySelector('.board-container tbody');
 
@@ -78,6 +82,8 @@ function renderBoard(board) {
     strHTML += '<tr>\n';
 
     for (var j = 0; j < board[i].length; j++) {
+      if (isLose && board[i][j].isMine) board[i][j].isShown = true;
+
       var cellClasses = geStringCellClasses(board[i][j]);
       var cellContent = getCellContentByCell(board[i][j]);
 
@@ -108,14 +114,12 @@ function renderCellHintMode(board, location) {
     for (var j = location.j - 1; j <= location.j + 1; j++) {
       if (j < 0 || j >= board[0].length) continue;
 
-      var elCell = getCellElementByLocation({ i, j });
-
       board[i][j].isShown = true;
-      elCell.innerText = getCellContentByCell(board[i][j]);
-
-      elCell.classList.add('opened');
     }
   }
+
+  renderBoard(board);
+  startHintTimer(cloned);
 }
 
 function geStringCellClasses(cell) {
@@ -147,8 +151,24 @@ function getCellContentByCell(cell) {
   return EMPTY;
 }
 
-function getCellElementByLocation(location) {
-  var id = `cell-${location.i}-${location.j}`;
+function startHintTimer(oldBoard) {
+  if (gHintTimer) stopHintTimer();
 
-  return document.querySelector(`#${id}`);
+  gHintTimer = setTimeout(stopHintRenderMode, HINT_TIMER_FREQ, oldBoard);
+}
+
+function stopHintTimer() {
+  if (!gHintTimer) return;
+
+  clearTimeout(gHintTimer);
+
+  gHintTimer = null;
+}
+
+function stopHintRenderMode(board) {
+  gBoard = board;
+  gGame.isHint = false;
+  gGame.isOn = true;
+
+  renderBoard(gBoard);
 }

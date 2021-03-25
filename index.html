@@ -21,43 +21,66 @@
 
     <div class="modal"></div>
 
-    <div class="game-container">
-      <div id="menu-level-1" class="menu-container">
-        <div class="small-container mines-container">
-          💣 <span id="mines-left">0</span>
+    <div class="root-container">
+      <div class="game-container">
+        <div id="menu-level-1" class="menu-container">
+          <div class="small-container mines-container">
+            💣 <span id="mines-left">0</span>
+          </div>
+
+          <div class="small-container difficulty-container">
+            <input class="default-input" type="radio" id="easy" name="difficulties" value="easy"
+              onclick="changeDifficulty(this)" checked>
+            <label for="easy">Easy (4 x 4)</label>
+
+            <input class="default-input" type="radio" id="medium" name="difficulties" value="medium"
+              onclick="changeDifficulty(this)">
+            <label for="medium">Medium (8 x 8)</label>
+
+            <input class="default-input" type="radio" id="hard" name="difficulties" value="hard"
+              onclick="changeDifficulty(this)">
+            <label for="hard">Hard (12 x 12)</label>
+          </div>
+
+          <div class="small-container timer-container">00:00</div>
         </div>
 
-        <div class="small-container difficulty-container">
-          <input type="radio" id="small" name="difficulties" value="small" onclick="changeDifficulty(this)" checked>
-          <label for="small">Small (4 x 4)</label>
+        <div id="menu-level-2" class="menu-container">
+          <div class="small-container lives-container"></div>
 
-          <input type="radio" id="medium" name="difficulties" value="medium" onclick="changeDifficulty(this)">
-          <label for="medium">Medium (8 x 8)</label>
+          <div class="small-container smiley-container">
+            <button id="smiley-button" onclick="reset()">😐</button>
+          </div>
 
-          <input type="radio" id="large" name="difficulties" value="large" onclick="changeDifficulty(this)">
-          <label for="large">Large (12 x 12)</label>
+          <div class="small-container hints-container">
+            <button id="hint-button" onclick="useHint()">💡</button>
+            <span id="hints-left"></span>
+          </div>
         </div>
 
-        <div class="small-container timer-container">00:00</div>
+        <div class="board-container">
+          <table border="1" cellpadding="0">
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
 
-      <div id="menu-level-2" class="menu-container">
-        <div class="small-container lives-container"></div>
+      <div class="best-scores-container">
+        <div id="easy-scores" class="difficulty-scores-container">
+          <h5>Easy Difficulty Scores</h5>
 
-        <div class="small-container mode-container">
-          <button id="mode-button" onclick="reset()">😐</button>
+          <ol class="scores-list"></ol>
         </div>
+        <div id="medium-scores" class="difficulty-scores-container">
+          <h5>Medium Difficulty Scores</h5>
 
-        <div class="small-container hints-container">
-          <button id="hint-button" onclick="useHint()" disabled>💡</button>
-          <span id="hints-left"></span>
+          <ol class="scores-list"></ol>
         </div>
-      </div>
+        <div id="hard-scores" class="difficulty-scores-container">
+          <h5>Hard Difficulty Scores</h5>
 
-      <div class="board-container">
-        <table border="1" cellpadding="0">
-          <tbody></tbody>
-        </table>
+          <ol class="scores-list"></ol>
+        </div>
       </div>
     </div>
 
@@ -66,6 +89,7 @@
     <script src="js/timer.js"></script>
     <script src="js/board.js"></script>
     <script src="js/modal.js"></script>
+    <script src="js/bestScores.js"></script>
   </body>
 
 </html>

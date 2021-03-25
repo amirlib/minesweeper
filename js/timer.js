@@ -25,13 +25,17 @@ function resetTimer() {
 
 function updateTimer() {
   gGame.secsPassed++;
+  gElTimer.innerText = secsToString(gGame.secsPassed);
+}
 
-  var time = gGame.secsPassed;
-  var secs = time % 60;
+function secsToString(seconds) {
+  var secs = seconds % 60;
   var secsStr = secs < 10 ? `0${secs}` : `${secs}`;
-  time = Math.floor(time / 60);
-  var mins = time % 60;
+
+  seconds = Math.floor(seconds / 60);
+
+  var mins = seconds % 60;
   var minsStr = mins < 10 ? `0${mins}` : `${mins}`;
 
-  gElTimer.innerText = `${minsStr}:${secsStr}`;
+  return `${minsStr}:${secsStr}`;
 }

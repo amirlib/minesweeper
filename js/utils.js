@@ -1,3 +1,15 @@
+function changeElAttr(selector, attrName, value) {
+  var el = document.querySelector(selector);
+
+  el[attrName] = value;
+}
+
+function appendHTMLToEl(selector, value) {
+  var el = document.querySelector(selector);
+
+  el.innerHTML += value;
+}
+
 function createCellLocationsArr(board) {
   var locations = [];
 
@@ -17,7 +29,7 @@ function cloneBoard(board) {
     cloned.push([]);
 
     for (var j = 0; j < board[i].length; j++) {
-      cloned[i][j].push(cloneCell(board[i][j]));
+      cloned[i].push(cloneCell(board[i][j]));
     }
   }
 

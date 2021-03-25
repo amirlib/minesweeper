@@ -2,14 +2,13 @@ const EMPTY = ' ';
 const FLAG = '🚩';
 const LIVE = '❤️';
 const MINE = '💣';
-const MODE_LOSE = '💀';
-const MODE_NORMAL = '😐';
-const MODE_WIN = '😎';
+const SMILEY_LOSE = '💀';
+const SMILEY_NORMAL = '😐';
+const SMILEY_WIN = '😎';
 const USED_LIVE = '🖤';
-const HINT_TIMER_FREQ = 1000;
 
 var gBoard;
-var gHintTimer;
+var gTimerInterval;
 var gGame = getDefaultGameValues();
 var gLevel = {
   HINTS: 3,
@@ -17,11 +16,11 @@ var gLevel = {
   MINES: 2,
   SIZE: 4,
 };
-var gTimerInterval;
 
 function init() {
   gBoard = buildBoard(gLevel.SIZE);
 
+  initBestScores();
   renderMinesLeft();
   renderLives();
   renderHints();
@@ -33,29 +32,35 @@ function getDefaultGameValues() {
     isHint: false,
     isOn: false,
     markedCount: 0,
-    mode: MODE_NORMAL,
     secsPassed: 0,
     shownCount: 0,
+    smiley: SMILEY_NORMAL,
     usedHints: 0,
     usedLives: 0,
   };
 }
 
 function cellClicked(elCell, i, j) {
-  if (!gGame.isOn) startGame({ i, j });
-  if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return;
+  if (!gGame.isOn && !gGame.isHint) startGame({ i, j }); // first ever click
+  if (!gGame.isOn && gGame.isHint) return; // if board is rendering in HINT mode
+  if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return; // clicking on marked/opened cell
 
+  // if user choose to use hint
   if (gGame.isHint) {
+    gGame.isOn = false;
+
     renderCellHintMode(gBoard, { i, j });
 
     return;
   }
 
+  // show and render the desired cell
   gBoard[i][j].isShown = true;
   gGame.shownCount++;
 
   renderCell(elCell, i, j);
 
+  // if the desired cell is a mine
   if (gBoard[i][j].isMine) {
     gGame.usedLives++;
 
@@ -95,23 +100,25 @@ function useHint() {
 }
 
 function loseGame() {
-  gGame.mode = MODE_LOSE;
+  gGame.smiley = SMILEY_LOSE;
 
   gameOver();
   showLoseMsg();
+  renderBoard(gBoard, true);
 }
 
 function winGame() {
-  gGame.mode = MODE_WIN;
+  gGame.smiley = SMILEY_WIN;
 
   gameOver();
   showSuccessMsg();
+  addScore(gGame.secsPassed, gLevel);
 }
 
 function gameOver() {
   gGame.isOn = false;
 
-  renderMode();
+  renderSmiley();
   stopTimerInterval();
 }
 
@@ -132,33 +139,23 @@ function startGame(startLocation) {
 }
 
 function renderHints() {
-  var gElHints = document.querySelector('#menu-level-2 #hints-left');
   var hintsLeft = gLevel.HINTS - gGame.usedHints;
   var hints = ` X ${hintsLeft}`;
 
-  if (hintsLeft === 0) {
-    var gElHintButton = document.querySelector('#menu-level-2 #hint-button');
+  if (hintsLeft === 0) changeElAttr('#menu-level-2 #hint-button', 'disabled', true);
 
-    gElHintButton.disabled = true;
-  }
-
-  gElHints.innerText = hints;
+  changeElAttr('#menu-level-2 #hints-left', 'innerText', hints);
 }
 
 function renderMinesLeft() {
-  var gElMinesLeft = document.querySelector('#menu-level-1 #mines-left');
-
-  gElMinesLeft.innerText = gLevel.MINES - gGame.markedCount;
+  changeElAttr('#menu-level-1 #mines-left', 'innerText', gLevel.MINES - gGame.markedCount);
 }
 
-function renderMode() {
-  var gElModeButton = document.querySelector('#menu-level-2 #mode-button');
-
-  gElModeButton.innerText = gGame.mode;
+function renderSmiley() {
+  changeElAttr('#menu-level-2 #smiley-button', 'innerText', gGame.smiley);
 }
 
 function renderLives() {
-  var gElLives = document.querySelector('#menu-level-2 .lives-container');
   var livesLeft = gLevel.LIVES - gGame.usedLives;
   var lives = '';
 
@@ -170,12 +167,12 @@ function renderLives() {
     lives += USED_LIVE;
   }
 
-  gElLives.innerText = lives;
+  changeElAttr('#menu-level-2 .lives-container', 'innerText', lives);
 }
 
 function changeDifficulty(elRadioBtn) {
   switch (elRadioBtn.value) {
-    case 'small':
+    case 'easy':
       setLevel(3, 2, 2, 4);
 
       break;
@@ -183,7 +180,7 @@ function changeDifficulty(elRadioBtn) {
       setLevel(3, 3, 12, 8);
 
       break;
-    case 'large':
+    case 'hard':
       setLevel(3, 3, 30, 12);
 
       break;
@@ -207,7 +204,8 @@ function reset() {
   gGame = getDefaultGameValues();
 
   closeModal();
+  stopHintTimer();
   stopTimerInterval();
-  renderMode();
+  renderSmiley();
   init();
 }
