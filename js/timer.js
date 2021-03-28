@@ -1,6 +1,6 @@
 var TIMER_INTERVAL_FREQ = 1000;
 
-var gElTimer = document.querySelector('#menu-level-1 .timer-container');
+var gElTimer = document.querySelector('#menu-level-1 #timer-container');
 
 function startTimerInterval() {
   if (gTimerInterval) stopTimerInterval();

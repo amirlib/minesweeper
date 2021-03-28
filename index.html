@@ -17,18 +17,22 @@
       </div>
 
       <span>Mine Sweeper</span>
+
+      <button id="play-manually-button" class="app-header-button" onclick="PlayManuallyBoard()">Play</button>
+      <button id="create-manually-button" class="app-header-button" onclick="toggleManuallyBoard()">Manually Create
+        Board</button>
     </div>
 
     <div class="modal"></div>
 
     <div class="root-container">
-      <div class="game-container">
-        <div id="menu-level-1" class="menu-container">
-          <div class="small-container mines-container">
+      <div id="game-container">
+        <div id="menu-level-1" class="menu-container container">
+          <div class="small-size container">
             💣 <span id="mines-left">0</span>
           </div>
 
-          <div class="small-container difficulty-container">
+          <div id="difficulties-container" class="container">
             <input class="default-input" type="radio" id="easy" name="difficulties" value="easy"
               onclick="changeDifficulty(this)" checked>
             <label for="easy">Easy (4 x 4)</label>
@@ -42,17 +46,17 @@
             <label for="hard">Hard (12 x 12)</label>
           </div>
 
-          <div class="small-container timer-container">00:00</div>
+          <div id="timer-container" class="small-size container">00:00</div>
         </div>
 
-        <div id="menu-level-2" class="menu-container">
-          <div class="small-container lives-container"></div>
+        <div id="menu-level-2" class="menu-container container">
+          <div id="lives-container" class="medium-size container"></div>
 
-          <div class="small-container smiley-container">
+          <div id="smiley-container" class="container">
             <button id="smiley-button" onclick="reset()">😐</button>
           </div>
 
-          <div class="small-container hints-container">
+          <div id="hints-container" class="medium-size container">
             <button id="hint-button" onclick="useHint()">💡</button>
             <span id="hints-left"></span>
           </div>
@@ -64,8 +68,8 @@
           </table>
         </div>
 
-        <div id="menu-level-3" class="menu-container">
-          <div class="small-container safe-clicks-container">
+        <div id="menu-level-3" class="menu-container container">
+          <div class="large-size container">
             <button id="safe-click-button" onclick="useSafeClick()">Safe Click</button>
             <span id="safe-clicks-left"></span>
           </div>
@@ -101,6 +105,7 @@
     <script src="./js/safeClicks.js"></script>
     <script src="./js/modal.js"></script>
     <script src="./js/bestScores.js"></script>
+    <script src="./js/manually.js"></script>
   </body>
 
 </html>

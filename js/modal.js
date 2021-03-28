@@ -7,9 +7,7 @@ function showModal(text) {
 }
 
 function setModel(text, visibility) {
-  var elModal = document.querySelector('.modal');
-
-  elModal.innerText = text;
-  elModal.style.visibility = visibility;
+  changeElAttr('.modal', 'innerText', text);
+  changeElStyleAttr('.modal', 'visibility', visibility);
 }
 

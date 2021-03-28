@@ -10,6 +10,8 @@ body {
   margin: 0 5px;
 }
 
+/* header section */
+
 .app-header-container {
   align-items: center;
   background-color: rgb(252, 187, 185);
@@ -40,6 +42,20 @@ body {
   width: 100%;
 }
 
+.app-header-button {
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #dcdcdc;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  margin-left: 10px;
+  padding: 5px;
+  visibility: hidden;
+}
+
+/* modal */
+
 .modal {
   background-color: rgb(252, 187, 185);
   border: 1px rgb(138, 138, 138) solid;
@@ -53,17 +69,24 @@ body {
   visibility: hidden;
 }
 
+/* app */
+
 .root-container {
   margin: 10px auto 0;
   width: 600px;
 }
 
-.menu-container {
+/* game menu */
+
+.container {
   align-items: center;
   display: flex;
-  height: 50px;
   justify-content: space-between;
   padding: 5px;
+}
+
+.menu-container {
+  height: 50px;
   width: 100%;
 }
 
@@ -76,32 +99,19 @@ body {
   outline: none;
 }
 
-.small-container {
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: space-between;
-  padding: 5px;
-  text-align: center;
-}
-
-.mines-container {
+.small-size {
   width: 60px;
 }
 
-.timer-container {
-  width: 60px;
-}
-
-.lives-container {
+.medium-size {
   width: 80px;
 }
 
-.hints-container {
-  align-items: center;
-  display: flex;
-  width: 80px;
+.large-size {
+  width: 150px;
 }
+
+/* board section */
 
 .board-container {
   margin: 10px;
@@ -144,11 +154,7 @@ body {
   background-color: rgb(202, 250, 170);
 }
 
-.safe-clicks-container {
-  align-items: center;
-  display: flex;
-  width: 150px;
-}
+/* best scores section */
 
 .best-scores-container {
   align-items: flex-start;

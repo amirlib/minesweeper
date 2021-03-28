@@ -27,7 +27,7 @@ function renderSafeClicks() {
 
 function resetSafeClicks() {
   stopSafeClickTimer();
-  changeElAttr('#menu-level-3 #safe-clicks-left', 'disabled', false); // enable the hint button
+  changeElAttr('#menu-level-3 #safe-click-button', 'disabled', false); // enable the hint button
 }
 
 function startSafeClickTimer(location) {

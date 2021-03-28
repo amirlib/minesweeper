@@ -15,6 +15,7 @@ var gLevel = getDefaultGameLevel();
 function init() {
   gBoard = buildBoard(gLevel.SIZE);
 
+  initManuallyButtons();
   initBestScores();
   renderMinesLeft();
   renderLives();
@@ -27,10 +28,9 @@ function getDefaultGameValues() {
   return {
     isOn: false,
     markedCount: 0,
-    mode: 'INITIAL', // INITIAL, PLAYING, GAME_OVER, HINT, SAFE_CLICK
+    mode: 'INITIAL', // INITIAL, PLAYING, GAME_OVER, HINT, SAFE_CLICK, MANUALLY_BOARD
     secsPassed: 0,
     shownCount: 0,
-    smiley: SMILEY_NORMAL,
     usedHints: 0,
     usedLives: 0,
     usedSafeClicks: 0,
@@ -48,19 +48,46 @@ function getDefaultGameLevel() {
 }
 
 function cellClicked(elCell, i, j) {
-  if (gGame.mode === 'INITIAL') startGame({ i, j }); // first ever click
-  if (gGame.mode === 'GAME_OVER') return; // if the game in game over mode
-  if (!gGame.isOn && gGame.mode === 'HINT') return; // if board is rendering in HINT mode
-  if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return; // clicking on marked/opened cell
+  switch (gGame.mode) {
+    case 'INITIAL':
+      startGame({ i, j });
 
-  // if user choose to use hint
-  if (gGame.mode === 'HINT') {
-    gGame.isOn = false;
+      break;
+    case 'HINT':
+      if (!gGame.isOn) return; // if board is rendering in HINT mode
 
-    renderCellHintMode(gBoard, { i, j });
+      gGame.isOn = false; // if user chooses to use hint
 
-    return;
+      renderCellHintMode(gBoard, { i, j });
+
+      return;
+    case 'GAME_OVER':
+      return;
+    case 'MANUALLY_BOARD':
+      if (!gBoard[i][j].isShown && gGame.markedCount === gLevel.MINES) return;
+
+      gBoard[i][j].isMine = !gBoard[i][j].isMine;
+      gBoard[i][j].isShown = !gBoard[i][j].isShown;
+
+      if (gBoard[i][j].isShown) {
+        gGame.markedCount++;
+      } else {
+        gGame.markedCount--;
+      }
+
+      renderCell(gBoard, elCell, { i, j });
+      renderMinesLeft();
+
+      if (gGame.markedCount === gLevel.MINES) {
+        activatePlayButton();
+      } else {
+        deactivatePlayButton();
+      }
+
+      return;
   }
+
+  if (gBoard[i][j].isShown || gBoard[i][j].isMarked) return; // clicking on marked/opened cell
 
   // show and render the desired cell
   gBoard[i][j].isShown = true;
@@ -106,26 +133,23 @@ function checkGameOver() {
 }
 
 function loseGame() {
-  gGame.smiley = SMILEY_LOSE;
-
   gameOver();
   showLoseMsg();
   renderBoard(gBoard, true);
+  renderSmiley(SMILEY_LOSE);
 }
 
 function winGame() {
-  gGame.smiley = SMILEY_WIN;
-
   gameOver();
   showSuccessMsg();
   addScore(gGame.secsPassed, gLevel);
+  renderSmiley(SMILEY_WIN);
 }
 
 function gameOver() {
   gGame.mode = 'GAME_OVER';
   gGame.isOn = false;
 
-  renderSmiley();
   stopTimerInterval();
 }
 
@@ -139,8 +163,13 @@ function showSuccessMsg() {
 
 function startGame(startLocation) {
   placeMines(gBoard, gLevel.MINES, startLocation);
+  startGameManually();
+}
+
+function startGameManually() {
   setMinesAroundCount(gBoard);
   startTimerInterval();
+  resetManuallyButtons();
 
   gGame.mode = 'PLAYING';
   gGame.isOn = true;
@@ -166,15 +195,15 @@ function renderLives() {
     lives += USED_LIVE;
   }
 
-  changeElAttr('#menu-level-2 .lives-container', 'innerText', lives);
+  changeElAttr('#menu-level-2 #lives-container', 'innerText', lives);
 }
 
 function renderMinesLeft() {
   changeElAttr('#menu-level-1 #mines-left', 'innerText', getMinesLeft());
 }
 
-function renderSmiley() {
-  changeElAttr('#menu-level-2 #smiley-button', 'innerText', gGame.smiley);
+function renderSmiley(smiley) {
+  changeElAttr('#menu-level-2 #smiley-button', 'innerText', smiley);
 }
 
 function changeDifficulty(elRadioBtn) {
@@ -208,7 +237,7 @@ function setLevel(hints, lives, mines, safeClicks, size) {
   gLevel.SIZE = size;
 }
 
-function reset() {
+function resetPlayingMode() {
   gGame = getDefaultGameValues();
 
   closeModal();
@@ -216,5 +245,19 @@ function reset() {
   renderSmiley();
   resetHints();
   resetSafeClicks();
+  renderSmiley(SMILEY_NORMAL);
   init();
+}
+
+function reset() {
+  switch (gGame.mode) {
+    case 'MANUALLY_BOARD':
+      resetManuallyMode();
+
+      break;
+    default:
+      resetPlayingMode();
+
+      break;
+  }
 }

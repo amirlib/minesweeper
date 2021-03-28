@@ -21,6 +21,14 @@ function createCell() {
   }
 }
 
+function hideAllCells(board) {
+  for (var i = 0; i < board.length; i++) {
+    for (var j = 0; j < board[i].length; j++) {
+      if (board[i][j].isShown) board[i][j].isShown = false;
+    }
+  }
+}
+
 function placeMines(board, amount, startLocation) {
   var locations = createCellLocationsArr(board);
 
